@@ -1,0 +1,18 @@
+- name: Install ClusterShell
+  ansible.builtin.package:
+    name: "{{ clustershell_package }}"
+    state: present
+
+- name: Set default group name
+  ansible.builtin.lineinfile:
+    path: /etc/clustershell/groups.conf
+    regexp: '^default:'
+    line: 'default: default'
+
+- name: Define default groups
+  ansible.builtin.template:
+    src: default.yaml.j2
+    dest: /etc/clustershell/groups.d/default.yaml
+    owner: root
+    group: root
+    mode: 0644
