@@ -1,6 +1,6 @@
 - name: Install ClusterShell
   ansible.builtin.package:
-    name: "{{ clustershell_package }}"
+    name: "{{ clustershell_packages }}"
     state: present
 
 - name: Set default group name
