@@ -1,5 +1,6 @@
 galaxy_info:
   role_name: clustershell
+  namespace: btravouillon
   author: Bruno Travouillon
   description: Install and configure ClusterShell
   company: Mila

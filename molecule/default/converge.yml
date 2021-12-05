@@ -4,4 +4,4 @@
   tasks:
     - name: "Include clustershell"
       include_role:
-        name: "clustershell"
+        name: "btravouillon.clustershell"
