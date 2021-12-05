@@ -20,16 +20,16 @@ galaxy_info:
   platforms:
   - name: Debian
     versions:
-    - 10
-    - 11
+    - buster
+    - bullseye
   - name: EL
     versions:
     - 7
     - 8
   - name: Ubuntu
     versions:
-    - 18.04
-    - 20.04
+    - bionic
+    - focal
 
   galaxy_tags:
     - cluster
