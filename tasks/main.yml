@@ -7,12 +7,12 @@
   ansible.builtin.lineinfile:
     path: /etc/clustershell/groups.conf
     regexp: '^default:'
-    line: 'default: default'
+    line: 'default: ansible'
 
 - name: Define default groups
   ansible.builtin.template:
-    src: default.yaml.j2
-    dest: /etc/clustershell/groups.d/default.yaml
+    src: ansible.yaml.j2
+    dest: /etc/clustershell/groups.d/ansible.yaml
     owner: root
     group: root
     mode: 0644
