@@ -6,6 +6,13 @@ based on the groups declared in the Ansible inventory.
 
 [1]: https://cea-hpc.github.io/clustershell/
 
+Requirements
+------------
+
+The below Python requirements are needed on the host that executes this role.
+
+ - clustershell
+
 Role Variables
 --------------
 

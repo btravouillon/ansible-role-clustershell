@@ -1,5 +1,6 @@
 ## {{ ansible_managed }} ##
 
-{# The Ansible groups dict must be in the ansible dictionary #}
-{% set ansible = {'ansible': groups} %}
-{{ ansible | to_nice_yaml(indent=2) }}
+ansible:
+{% for group in groups | sort %}
+    {{ group }}: '{{ groups[group] | nodeset }}'
+{% endfor %}
