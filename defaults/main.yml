@@ -1,2 +1,8 @@
 ---
 clustershell_packages: clustershell
+
+# Configuration for sudo mode (added in ClusterShell 1.9)
+# Set 'clustershell_sudo: true' to enable sudo mode
+clustershell_sudo: false
+clustershell_sudo_password_prompt: 'yes'
+clustershell_sudo_command_prefix: /usr/bin/sudo -S -p "''"
