@@ -11,7 +11,7 @@ on:
 
 jobs:
   molecule:
-    name: ${{ matrix.distro }} - Molecule tests
+    name: ${{ matrix.distro }} - ${{ matrix.scenario }} - Molecule tests
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -22,6 +22,9 @@ jobs:
           - rockylinux9
           - ubuntu2204
           - ubuntu2404
+        scenario:
+          - default
+          - sudo
 
     steps:
       - name: Checkout code
@@ -39,6 +42,7 @@ jobs:
         run: tox
         working-directory: clustershell
         env:
-          MOLECULE_DISTRO: ${{ matrix.distro }}
-          PY_COLORS: 1
           ANSIBLE_FORCE_COLOR: 1
+          MOLECULE_DISTRO: ${{ matrix.distro }}
+          MOLECULE_SCENARIO: ${{ matrix.scenario }}
+          PY_COLORS: 1
