@@ -5,6 +5,9 @@ on:
     branches:
       - main
   pull_request:
+  schedule:
+    # Every Monday at 7:47 EST
+    - cron: "47 11 * * 1"
 
 jobs:
   molecule:
@@ -14,21 +17,21 @@ jobs:
       fail-fast: false
       matrix:
         distro:
-          - geerlingguy/docker-centos7-ansible:latest
-          - geerlingguy/docker-centos8-ansible:latest
-          - geerlingguy/docker-debian10-ansible:latest
-          - geerlingguy/docker-debian11-ansible:latest
-          - geerlingguy/docker-ubuntu1804-ansible:latest
-          - geerlingguy/docker-ubuntu2004-ansible:latest
+          - debian11
+          - debian12
+          - rockylinux8
+          - rockylinux9
+          - ubuntu2204
+          - ubuntu2404
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: 'clustershell'
 
       - name: Setup python environment
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
 
       - name: Install test dependencies
         run: pip3 install tox
@@ -37,6 +40,6 @@ jobs:
         run: tox
         working-directory: clustershell
         env:
-          CONTAINER: ${{ matrix.distro }}
+          MOLECULE_DISTRO: ${{ matrix.distro }}
           PY_COLORS: 1
           ANSIBLE_FORCE_COLOR: 1
