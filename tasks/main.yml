@@ -15,4 +15,21 @@
     dest: /etc/clustershell/groups.d/ansible.yaml
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
+
+- name: Configure sudo mode
+  when: clustershell_sudo | bool
+  block:
+    - ansible.builtin.file:
+        path: /etc/clustershell/clush.conf.d/
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - ansible.builtin.template:
+        src: sudo.conf.j2
+        dest: /etc/clustershell/clush.conf.d/sudo.conf
+        owner: root
+        group: root
+        mode: "0644"
