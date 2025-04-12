@@ -2,6 +2,15 @@
 - name: Converge
   hosts: all
   tasks:
+    - name: "Add fake hosts and groups"
+      changed_when: false  # Required to avoid idempotence issue
+      ansible.builtin.add_host:
+        name: "{{ item.name }}"
+        groups: "{{ item.groups }}"
+      loop:
+        - { name: hmock1, groups: [gmock1, common] }
+        - { name: hmock2, groups: [gmock2, common] }
+
     - name: "Include clustershell"
       include_role:
         name: "btravouillon.clustershell"

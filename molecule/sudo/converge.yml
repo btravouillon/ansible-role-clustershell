@@ -3,6 +3,7 @@
   hosts: all
   vars:
     clustershell_sudo: true
+    clustershell_sudo_command_prefix: fake_command
   tasks:
     - name: "Include clustershell"
       include_role:

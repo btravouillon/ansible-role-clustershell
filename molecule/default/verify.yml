@@ -1,0 +1,69 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Collect package facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Assert package is installed
+      ansible.builtin.assert:
+        that: "'{{ item }}' in ansible_facts.packages"
+      loop:
+        - clustershell
+
+    - name: Check /etc/clustershell/groups.conf
+      ansible.builtin.stat:
+        path: /etc/clustershell/groups.conf
+      register: groups_conf_stat
+      changed_when: false
+
+    - name: Assert file /etc/clustershell/groups.conf exists
+      ansible.builtin.assert:
+        that:
+          - groups_conf_stat.stat.exists
+
+    - name: Check /etc/clustershell/groups.d/ansible.yaml
+      ansible.builtin.stat:
+        path: /etc/clustershell/groups.d/ansible.yaml
+      register: groups_ansible_stat
+      changed_when: false
+
+    - name: Assert file /etc/clustershell/groups.d/ansible.yaml exists
+      ansible.builtin.assert:
+        that:
+          - groups_ansible_stat.stat.exists
+          - groups_ansible_stat.stat.mode == '0644'
+          - groups_ansible_stat.stat.pw_name == 'root'
+          - groups_ansible_stat.stat.gr_name == 'root'
+
+    - name: Read /etc/clustershell/groups.d/ansible.yaml
+      ansible.builtin.slurp:
+        src: /etc/clustershell/groups.d/ansible.yaml
+      register: groups_ansible_yaml
+
+    - name: Display /etc/clustershell/groups.d/ansible.yaml
+      ansible.builtin.debug:
+        msg: "{{ groups_ansible_yaml['content'] | b64decode }}"
+
+    - name: Register groups in /etc/clustershell/groups.d/ansible.yaml
+      ansible.builtin.lineinfile:
+        path: /etc/clustershell/groups.d/ansible.yaml
+        regexp: "{{ item }}"
+        state: absent
+      check_mode: yes
+      register: reg_conf_groups_ansible
+      changed_when: false
+      loop:
+        - "^    all: 'hmock\\[1-2\\],instance'$"
+        - "^    common: 'hmock\\[1-2\\]'$"
+        - "^    gmock1: 'hmock1'$"
+        - "^    ungrouped: 'instance'$"
+
+    - name: Check /etc/clustershell/groups.d/ansible.yaml contains group
+      ansible.builtin.assert:
+        that: "{{ item.found | bool }}"
+        quiet: true
+      loop: "{{ reg_conf_groups_ansible.results }}"
+      loop_control:
+        label: "{{ item.item }}"
