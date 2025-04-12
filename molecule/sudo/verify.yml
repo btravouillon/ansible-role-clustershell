@@ -1,0 +1,36 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Retrieve file /etc/clustershell/clush.conf.d/sudo.conf
+      ansible.builtin.stat:
+        path: /etc/clustershell/clush.conf.d/sudo.conf
+      register: reg_file_sudo
+      changed_when: false
+
+    - name: Assert file /etc/clustershell/clush.conf.d/sudo.conf exists
+      ansible.builtin.assert:
+        that:
+          - reg_file_sudo.stat.exists
+          - reg_file_sudo.stat.mode == '0644'
+          - reg_file_sudo.stat.pw_name == 'root'
+          - reg_file_sudo.stat.gr_name == 'root'
+
+    - name: Read /etc/clustershell/clush.conf.d/sudo.conf
+      ansible.builtin.slurp:
+        src: /etc/clustershell/clush.conf.d/sudo.conf
+      register: sudo_conf
+
+    - name: Display /etc/clustershell/clush.conf.d/sudo.conf
+      ansible.builtin.debug:
+        msg: "{{ sudo_conf['content'] | b64decode }}"
+
+    - name: Check 'password_prompt=yes'
+      ansible.builtin.assert:
+        that: "{{ sudo_conf['content'] | b64decode |
+                 regex_findall(('^password_prompt: yes'), multiline=True) | length == 1 }}"
+
+    - name: Check 'command_prefix=fake_command'
+      ansible.builtin.assert:
+        that: "{{ sudo_conf['content'] | b64decode |
+                regex_findall(('^command_prefix: fake_command$'), multiline=True) | length == 1 }}"
