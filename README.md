@@ -21,6 +21,30 @@ Role Variables
     clustershell_packages:
       - clustershell
 
+    # List of example group bindings to enable
+    # e.g. to install Slurm group bindings:
+    # clustershell_group_bindings:
+    #   - slurm
+    #
+    # This will copy slurm.conf.example to slurm.conf
+    clustershell_group_bindings: []
+
+    # List of custom group bindings
+    # clustershell_group_bindings_custom:
+    #   - name: racksdb
+    #     content: |
+    #       [racksdb]
+    #       map:     racksdb nodes --infrastructure atlas --tags $GROUP --list
+    #       all:     racksdb nodes --infrastructure atlas --list
+    #       list:    racksdb tags  --infrastructure atlas --on-nodes
+    #       reverse: racksdb tags  --node $NODE
+    #
+    # This will install file racksdb.conf
+    clustershell_group_bindings_custom: []
+
+    # List of group bindings to remove
+    clustershell_group_bindings_remove: []
+
     # Configuration for sshpass mode (added in ClusterShell 1.9)
     # Set 'clustershell_sshpass: true' to enable sshpass mode
     clustershell_sshpass: false
