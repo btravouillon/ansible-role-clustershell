@@ -18,7 +18,16 @@ Role Variables
 
     ---
     # List of packages to install
-    clustershell_packages: clustershell
+    clustershell_packages:
+      - clustershell
+
+    # Configuration for sshpass mode (added in ClusterShell 1.9)
+    # Set 'clustershell_sshpass: true' to enable sshpass mode
+    clustershell_sshpass: false
+    clustershell_sshpass_password_prompt: 'yes'
+    clustershell_sshpass_ssh_path: /usr/bin/sshpass /usr/bin/ssh
+    clustershell_sshpass_scp_path: /usr/bin/sshpass /usr/bin/scp
+    clustershell_sshpass_ssh_options: -oBatchMode=no -oStrictHostKeyChecking=no
 
     # Configuration for sudo mode (added in ClusterShell 1.9)
     # Set 'clustershell_sudo: true' to enable sudo mode

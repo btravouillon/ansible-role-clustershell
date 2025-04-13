@@ -1,0 +1,13 @@
+---
+- name: Converge
+  hosts: all
+  vars:
+    clustershell_sshpass: true
+    clustershell_sshpass_password_prompt: 'yes'
+    clustershell_sshpass_ssh_path: fake_ssh_path
+    clustershell_sshpass_scp_path: fake_scp_path
+    clustershell_sshpass_ssh_options: fake_ssh_options
+  tasks:
+    - name: "Include clustershell"
+      include_role:
+        name: "btravouillon.clustershell"

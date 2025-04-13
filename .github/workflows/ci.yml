@@ -24,6 +24,7 @@ jobs:
           - ubuntu2404
         scenario:
           - default
+          - sshpass
           - sudo
 
     steps:

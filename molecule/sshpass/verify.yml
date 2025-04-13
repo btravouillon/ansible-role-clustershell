@@ -1,0 +1,57 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Collect package facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Assert package is installed
+      ansible.builtin.assert:
+        that: "'{{ item }}' in ansible_facts.packages"
+      loop:
+        - clustershell
+        - sshpass
+
+    - name: Retrieve file /etc/clustershell/clush.conf.d/sshpass.conf
+      ansible.builtin.stat:
+        path: /etc/clustershell/clush.conf.d/sshpass.conf
+      register: reg_file_sshpass
+      changed_when: false
+
+    - name: Assert file /etc/clustershell/clush.conf.d/sshpass.conf exists
+      ansible.builtin.assert:
+        that:
+          - reg_file_sshpass.stat.exists
+          - reg_file_sshpass.stat.mode == '0644'
+          - reg_file_sshpass.stat.pw_name == 'root'
+          - reg_file_sshpass.stat.gr_name == 'root'
+
+    - name: Read /etc/clustershell/clush.conf.d/sshpass.conf
+      ansible.builtin.slurp:
+        src: /etc/clustershell/clush.conf.d/sshpass.conf
+      register: sshpass_conf
+
+    - name: Display /etc/clustershell/clush.conf.d/sshpass.conf
+      ansible.builtin.debug:
+        msg: "{{ sshpass_conf['content'] | b64decode }}"
+
+    - name: Check 'password_prompt=yes'
+      ansible.builtin.assert:
+        that: "{{ sshpass_conf['content'] | b64decode |
+                 regex_findall(('^password_prompt: yes'), multiline=True) | length == 1 }}"
+
+    - name: Check 'ssh_path=fake_ssh_path'
+      ansible.builtin.assert:
+        that: "{{ sshpass_conf['content'] | b64decode |
+                regex_findall(('^ssh_path: fake_ssh_path$'), multiline=True) | length == 1 }}"
+
+    - name: Check 'scp_path=fake_scp_path'
+      ansible.builtin.assert:
+        that: "{{ sshpass_conf['content'] | b64decode |
+                regex_findall(('^scp_path: fake_scp_path$'), multiline=True) | length == 1 }}"
+
+    - name: Check 'ssh_options=fake_ssh_options'
+      ansible.builtin.assert:
+        that: "{{ sshpass_conf['content'] | b64decode |
+                regex_findall(('^ssh_options: fake_ssh_options$'), multiline=True) | length == 1 }}"

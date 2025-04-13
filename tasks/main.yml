@@ -1,6 +1,10 @@
 - name: Install ClusterShell
   ansible.builtin.package:
-    name: "{{ clustershell_packages }}"
+    name: "{{
+      clustershell_packages +
+      clustershell_sshpass | ternary(['sshpass'], []) +
+      clustershell_sudo    | ternary(['sudo'], [])
+    }}"
     state: present
 
 - name: Set default group name
@@ -17,19 +21,29 @@
     group: root
     mode: "0644"
 
+- name: Ensure clush.conf.d exists
+  when: clustershell_sshpass | bool or clustershell_sudo | bool
+  ansible.builtin.file:
+    path: /etc/clustershell/clush.conf.d/
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Configure sshpass mode
+  when: clustershell_sshpass | bool
+  ansible.builtin.template:
+    src: sshpass.conf.j2
+    dest: /etc/clustershell/clush.conf.d/sshpass.conf
+    owner: root
+    group: root
+    mode: "0644"
+
 - name: Configure sudo mode
   when: clustershell_sudo | bool
-  block:
-    - ansible.builtin.file:
-        path: /etc/clustershell/clush.conf.d/
-        state: directory
-        owner: root
-        group: root
-        mode: "0755"
-
-    - ansible.builtin.template:
-        src: sudo.conf.j2
-        dest: /etc/clustershell/clush.conf.d/sudo.conf
-        owner: root
-        group: root
-        mode: "0644"
+  ansible.builtin.template:
+    src: sudo.conf.j2
+    dest: /etc/clustershell/clush.conf.d/sudo.conf
+    owner: root
+    group: root
+    mode: "0644"
