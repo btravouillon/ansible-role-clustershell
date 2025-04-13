@@ -2,6 +2,17 @@
 - name: Verify
   hosts: all
   tasks:
+    - name: Collect package facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Assert package is installed
+      ansible.builtin.assert:
+        that: "'{{ item }}' in ansible_facts.packages"
+      loop:
+        - clustershell
+        - sudo
+
     - name: Retrieve file /etc/clustershell/clush.conf.d/sudo.conf
       ansible.builtin.stat:
         path: /etc/clustershell/clush.conf.d/sudo.conf
