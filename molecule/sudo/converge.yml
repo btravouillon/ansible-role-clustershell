@@ -6,5 +6,5 @@
     clustershell_sudo_command_prefix: fake_command
   tasks:
     - name: "Include clustershell"
-      include_role:
+      ansible.builtin.include_role:
         name: "btravouillon.clustershell"

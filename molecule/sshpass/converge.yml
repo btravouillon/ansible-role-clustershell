@@ -9,5 +9,5 @@
     clustershell_sshpass_ssh_options: fake_ssh_options
   tasks:
     - name: "Include clustershell"
-      include_role:
+      ansible.builtin.include_role:
         name: "btravouillon.clustershell"

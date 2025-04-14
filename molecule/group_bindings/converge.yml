@@ -15,5 +15,5 @@
           reverse: racksdb tags  --node $NODE
   tasks:
     - name: "Include clustershell"
-      include_role:
+      ansible.builtin.include_role:
         name: "btravouillon.clustershell"
