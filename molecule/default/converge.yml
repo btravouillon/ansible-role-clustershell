@@ -12,5 +12,5 @@
         - { name: hmock2, groups: [gmock2, common] }
 
     - name: "Include clustershell"
-      include_role:
+      ansible.builtin.include_role:
         name: "btravouillon.clustershell"

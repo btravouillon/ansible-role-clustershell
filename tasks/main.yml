@@ -3,7 +3,7 @@
     name: "{{
       clustershell_packages +
       clustershell_sshpass | ternary(['sshpass'], []) +
-      clustershell_sudo    | ternary(['sudo'], [])
+      clustershell_sudo | ternary(['sudo'], [])
     }}"
     state: present
 

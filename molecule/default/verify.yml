@@ -51,7 +51,7 @@
         path: /etc/clustershell/groups.d/ansible.yaml
         regexp: "{{ item }}"
         state: absent
-      check_mode: yes
+      check_mode: true
       register: reg_conf_groups_ansible
       changed_when: false
       loop:
