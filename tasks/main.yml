@@ -21,6 +21,37 @@
     group: root
     mode: "0644"
 
+- name: Configure group bindings from examples
+  loop: "{{ clustershell_group_bindings }}"
+  loop_control:
+    label: "Install /etc/clustershell/groups.conf.d/{{ item }}.conf"
+  ansible.builtin.copy:
+    remote_src: true
+    src: /etc/clustershell/groups.conf.d/{{ item }}.conf.example
+    dest: /etc/clustershell/groups.conf.d/{{ item }}.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Configure custom group bindings
+  loop: "{{ clustershell_group_bindings_custom }}"
+  loop_control:
+    label: "Install /etc/clustershell/groups.conf.d/{{ item.name }}.conf"
+  ansible.builtin.copy:
+    content: "{{ item.content }}"
+    dest: /etc/clustershell/groups.conf.d/{{ item.name }}.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Remove group bindings
+  loop: "{{ clustershell_group_bindings_remove }}"
+  loop_control:
+    label: "Remove /etc/clustershell/groups.conf.d/{{ item }}.conf"
+  ansible.builtin.file:
+    path: /etc/clustershell/groups.conf.d/{{ item }}.conf
+    state: absent
+
 - name: Ensure clush.conf.d exists
   when: clustershell_sshpass | bool or clustershell_sudo | bool
   ansible.builtin.file:

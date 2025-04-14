@@ -2,6 +2,15 @@
 clustershell_packages:
   - clustershell
 
+# List of example group bindings to enable
+clustershell_group_bindings: []
+
+# List of custom group bindings
+clustershell_group_bindings_custom: []
+
+# List of group bindings to remove
+clustershell_group_bindings_remove: []
+
 # Configuration for sshpass mode (added in ClusterShell 1.9)
 # Set 'clustershell_sshpass: true' to enable sshpass mode
 clustershell_sshpass: false

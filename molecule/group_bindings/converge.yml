@@ -1,0 +1,19 @@
+---
+- name: Converge
+  hosts: all
+  vars:
+    clustershell_group_bindings:
+      - genders
+      - slurm
+    clustershell_group_bindings_custom:
+      - name: racksdb
+        content: |
+          [racksdb]
+          map:     racksdb nodes --infrastructure atlas --tags $GROUP --list
+          all:     racksdb nodes --infrastructure atlas --list
+          list:    racksdb tags  --infrastructure atlas --on-nodes
+          reverse: racksdb tags  --node $NODE
+  tasks:
+    - name: "Include clustershell"
+      include_role:
+        name: "btravouillon.clustershell"

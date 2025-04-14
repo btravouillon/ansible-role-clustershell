@@ -1,0 +1,79 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Retrieve file /etc/clustershell/groups.conf.d/genders.conf
+      ansible.builtin.stat:
+        path: /etc/clustershell/groups.conf.d/genders.conf
+      register: reg_file_genders
+      changed_when: false
+
+    - name: Assert file /etc/clustershell/groups.conf.d/genders.conf exists
+      ansible.builtin.assert:
+        that:
+          - reg_file_genders.stat.exists
+          - reg_file_genders.stat.mode == '0644'
+          - reg_file_genders.stat.pw_name == 'root'
+          - reg_file_genders.stat.gr_name == 'root'
+
+    - name: Retrieve file /etc/clustershell/groups.conf.d/slurm.conf
+      ansible.builtin.stat:
+        path: /etc/clustershell/groups.conf.d/slurm.conf
+      register: reg_file_slurm
+      changed_when: false
+
+    - name: Assert file /etc/clustershell/groups.conf.d/slurm.conf exists
+      ansible.builtin.assert:
+        that:
+          - reg_file_slurm.stat.exists
+          - reg_file_slurm.stat.mode == '0644'
+          - reg_file_slurm.stat.pw_name == 'root'
+          - reg_file_slurm.stat.gr_name == 'root'
+
+    - name: Retrieve file /etc/clustershell/groups.conf.d/racksdb.conf
+      ansible.builtin.stat:
+        path: /etc/clustershell/groups.conf.d/racksdb.conf
+      register: reg_file_racksdb
+      changed_when: false
+
+    - name: Assert file /etc/clustershell/groups.conf.d/racksdb.conf exists
+      ansible.builtin.assert:
+        that:
+          - reg_file_racksdb.stat.exists
+          - reg_file_racksdb.stat.mode == '0644'
+          - reg_file_racksdb.stat.pw_name == 'root'
+          - reg_file_racksdb.stat.gr_name == 'root'
+
+    - name: Read /etc/clustershell/groups.conf.d/racksdb.conf
+      ansible.builtin.slurp:
+        src: /etc/clustershell/groups.conf.d/racksdb.conf
+      register: racksdb_conf
+
+    - name: Display /etc/clustershell/groups.conf.d/racksdb.conf
+      ansible.builtin.debug:
+        msg: "{{ racksdb_conf['content'] | b64decode }}"
+
+    - name: Check '[racksdb]' header
+      ansible.builtin.assert:
+        that: "{{ racksdb_conf['content'] | b64decode |
+                 regex_findall(('^\\[racksdb\\]$'), multiline=True) | length == 1 }}"
+
+    - name: Check 'map=racksdb nodes --infrastructure atlas --tags $GROUP --list'
+      ansible.builtin.assert:
+        that: "{{ racksdb_conf['content'] | b64decode |
+                 regex_findall(('^map:     racksdb nodes --infrastructure atlas --tags \\$GROUP --list$'), multiline=True) | length == 1 }}"
+
+    - name: Check 'all=racksdb nodes --infrastructure atlas --list'
+      ansible.builtin.assert:
+        that: "{{ racksdb_conf['content'] | b64decode |
+                regex_findall(('^all:     racksdb nodes --infrastructure atlas --list$'), multiline=True) | length == 1 }}"
+
+    - name: Check 'list=racksdb tags  --infrastructure atlas --on-nodes'
+      ansible.builtin.assert:
+        that: "{{ racksdb_conf['content'] | b64decode |
+                regex_findall(('^list:    racksdb tags  --infrastructure atlas --on-nodes$'), multiline=True) | length == 1 }}"
+
+    - name: Check 'reverse=racksdb tags  --node $NODE'
+      ansible.builtin.assert:
+        that: "{{ racksdb_conf['content'] | b64decode |
+                regex_findall(('^reverse: racksdb tags  --node \\$NODE$'), multiline=True) | length == 1 }}"
